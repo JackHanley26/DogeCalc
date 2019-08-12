@@ -1,5 +1,5 @@
 {
-  "name": "Doge Calc",
+  "name": "dogecalc",
   "version": "1.0.0",
   "description": "Mac Calculator in VueJS",
   "scripts": {
