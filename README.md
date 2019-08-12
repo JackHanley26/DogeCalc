@@ -6,3 +6,6 @@ To run
 4. much wow
 
 
+Running on netlify
+    https://gifted-tesla-1b8860.netlify.com/
+    
