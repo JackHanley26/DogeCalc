@@ -1,6 +1,12 @@
+// timeline library from GSAP that you can do some pretty cool animation with just JSON conf
 import {TimelineLite} from 'gsap'
 
 // initial config
+// value is the display value
+// stack is the calc stack
+// replace is a bool to tell when the value can be replaced with the next values
+// lastClick is used to do the highlighting of each button - I tied to mimic the actual Mac calculator
+
 const conf = {
   value: 0,
   stack: [],
@@ -68,11 +74,20 @@ const getOpDefault = () => ({
   func: handleFunctionButton,
 });
 
+// all the buttons are defined in in the list below.
+// this approach means minimal html
+// all config driven, each button type has it's own function
+// some are overridden e.g the % function or the positive / negative button
+// common config is spread instead of duplicating the config for each similar button - makes it easier to add more
+// common vars (i.e a new class for num button, only have to add it in one place rather than 10)
+
 const buttons = [
   {
     label: 'AC',
     ...getFnDefault(),
     func: (conf, btn) => {
+
+      // cancel the input - this means you can type 5 + 6 .. hit C then hit 4 and get 9 instead of 11 (5 + 4 = 9)
       if (btn.label === "C") {
         conf.value = 0;
         buttons[0].label = "AC";
@@ -98,9 +113,11 @@ const buttons = [
     label: '%',
     ...getFnDefault(),
     func: (conf) => {
+      // simple convert to percentage
       conf.value = conf.value / 100;
     }
   },
+  // each operator button has a operatorFn that is called in the generic function above
   {
     ...getOpDefault(),
     label: '÷',
@@ -161,6 +178,7 @@ const buttons = [
     ...getNumDefault(),
     label: '0',
     class: "is-half-btn num-btn",
+    // override func - 0 is weird
     func: (conf, btn) => {
       conf.value = parseFloat(`${conf.value}${btn.label}`);
     }
@@ -168,6 +186,7 @@ const buttons = [
   {
     ...getNumDefault(),
     label: '.',
+    // override func - don't want 123.24.34 (not a valid float)
     func: (conf, btn) => {
       // if the value isn't already a float then add a dot else do nothing
       if (conf.value.toString().indexOf(btn.label) === -1) {
@@ -218,7 +237,8 @@ const handleClick = (conf, btn) => {
 
 const getFontSize = () => {
 
-  // there is probably a nicer way to do with with CSS
+  // there is probably a nicer way to do with with CSS, but I couldn't figure it out so I did it like this
+  // the goal is to fit large numbers in the screen with them going off or overflowing
   const valLen = conf.value.toString().length;
 
   if (valLen > 18) {
@@ -273,7 +293,8 @@ export default {
   mounted() {
 
     // just added some animation for fun: GSAP https://greensock.com/
-
+    // need mounted because the refs will only be available then
+    // storing them in $items so the other functions can get at them
     calculator = this.$refs.calculator;
     for (const x in [...Array(buttons.length).keys()]) {
       items.push(this.$refs[`item${x}`])
@@ -281,9 +302,10 @@ export default {
     timeline.delay(2);
     const min = -1000;
     const max = 1000;
+    // some data science magic (aka Math.random())
     for (const i of items) {
-      const x = Math.floor(Math.random() * (+max - +min)) + +min;
-      const y = Math.floor(Math.random() * (+max - +min)) + +min;
+      const x = Math.floor(Math.random() * (max - +min)) + min;
+      const y = Math.floor(Math.random() * (max - +min)) + min;
       timeline.from(i, 0.1, {x, y, rotation: 1080, opacity: 0})
     }
 

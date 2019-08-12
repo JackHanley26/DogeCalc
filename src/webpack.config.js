@@ -1,4 +1,3 @@
-// import VueLoaderPlugin from 'vue-loader/lib/plugin';
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
@@ -24,7 +23,6 @@ module.exports = {
     ]
   },
   plugins: [
-    // make sure to include the plugin!
     new VueLoaderPlugin()
   ]
 };
