@@ -199,6 +199,12 @@ const buttons = [
     label: '=',
     func: (conf) => {
 
+      //todo:
+      // in hindsight I think I should have just had a firstOperand and secondOperand instead of a calc stack
+      // where the firstOperand just keeps getting updated as you click an operator button
+      // but I think it's probably fine this way for this case
+
+
       // add the current val to the stack
       conf.stack.push(genOperand(conf.value));
 
